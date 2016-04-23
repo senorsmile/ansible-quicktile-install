@@ -1,0 +1,60 @@
+---
+- name: apt install quicktile prereqs
+  become: True
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python
+    - python-gtk2
+    - python-xlib
+    - python-dbus
+    - python-wnck
+
+- name: apt install git
+  become: True
+  apt:
+    name: git
+    state: present
+
+- name: git clone quicktile
+  become: True
+  git:
+    repo: 'https://github.com/ssokolow/quicktile.git'
+    dest: '/usr/local/src/quicktile'
+    update: no
+    version: 28dd3e6f9f7aadbaa803084a90f3c91100a0a880 #sept 7 2015
+
+- name: ensure quicktile.py installed
+  file:
+    src: '/usr/local/src/quicktile/quicktile.py'
+    dest: '/usr/bin/quicktile'
+    remote_src: True
+    mode: '0755'
+
+- name: sync quicktile file
+  copy: 
+    src: 'quicktile.cfg'
+    dest: '/home/shaun/.config/quicktile.cfg'
+    owner: "{{ username | default('shaun') }}"
+    group: "{{ groupname | default('shaun') }}"
+    mode: '0644'
+
+- debug:
+    msg: "{{ ansible_env }}"
+
+- name: create $HOME/.config/autostart if not there
+  file:
+    path: "{{ homepath | default(ansible_env.HOME) }}/.config/autostart"
+    state: directory
+    owner: "{{ username | default('shaun') }}"
+    group: "{{ groupname | default('shaun') }}"
+
+
+- name: sync mate autostart
+  copy: 
+    src: 'quicktile.desktop'
+    dest: '{{ homepath | default(ansible_env.HOME) }}/.config/autostart/quicktile.desktop'
+    owner: "{{ username | default('shaun') }}"
+    group: "{{ groupname | default('shaun') }}"
+    mode: '0644'

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=quicktile --daemonize
+Hidden=false
+X-MATE-Autostart-enabled=true
+Name[en_US]=quicktile
+Name=quicktile
+Comment[en_US]=
+Comment=
